@@ -2,18 +2,23 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import isPromise from 'is-promise'
 import get from 'lodash.get'
+import { MEMO, objectToString } from './utils'
 
-export interface Action {
+export interface Action<T = unknown> {
   type: string
-  payload: unknown | (() => unknown | Promise<unknown>)
+  payload: unknown | (() => T | Promise<T>)
   meta?: object
 }
 
-export type UseMemoActionAction = ((...args: unknown[]) => Action) | Action
+export type UseMemoActionAction<T = unknown> = ((...args: unknown[]) => Action<T>) | Action<T>
 
 export interface UseMemoActionOptions {
   key: string
   ttl?: number
+}
+
+export interface UseMemoActionArgs {
+  [key: string]: any
 }
 
 export interface UseMemoActionReturn {
@@ -25,24 +30,33 @@ export interface UseMemoActionReturn {
   }
 }
 
-type MemoOptions = Pick<UseMemoActionOptions, 'key' | 'ttl'>
+type MemoOptions = {
+  args: UseMemoActionArgs
+  [key: symbol]: true
+} & Pick<UseMemoActionOptions, 'key' | 'ttl'>
 
 export function useMemoAction(
   action: UseMemoActionAction,
-  { key, ttl }: UseMemoActionOptions
+  options: UseMemoActionOptions,
+  args: UseMemoActionArgs = {}
 ): UseMemoActionReturn {
   const dispatch = useDispatch()
+  const { key: keyOption, ttl } = options
   const { type, payload, meta } = typeof action === 'function' ? action() : action
-  const path = `memo.${key}`
-  const storeData = useSelector((state) => get(state, path))
-  const memoOptions: MemoOptions = { key }
 
-  if (ttl !== undefined) {
-    memoOptions.ttl = ttl
+  let key = keyOption
+
+  if (Object.keys(args).length !== 0) {
+    key += `:${objectToString(args)}`
   }
 
+  const path = `memo.${key}`
+  const storeData = useSelector((state) => get(state, path))
+
+  const memoOptions: MemoOptions = { key, ttl, args, [MEMO]: true }
+
   const modifyAction = {
-    type: `${type}/${key}`,
+    type: `${type}/${keyOption}`,
     payload,
     meta: { ...meta, memoOptions },
   }

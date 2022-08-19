@@ -23,13 +23,11 @@
   "dependencies": {
     "is-promise": "^4.0.0",
     "lodash.get": "^4.4.2",
-    "lodash.isequal": "^4.5.0",
-    "lodash.set": "^4.3.2"
+    "lodash.isequal": "^4.5.0"
   },
   "devDependencies": {
     "@types/lodash.get": "^4.4.7",
     "@types/lodash.isequal": "^4.5.6",
-    "@types/lodash.set": "^4.3.7",
     "@types/node": "^18.7.6",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
