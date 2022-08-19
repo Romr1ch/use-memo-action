@@ -1,0 +1,75 @@
+{
+  "name": "@romr1ch/use-memo-action",
+  "version": "0.0.1",
+  "description": "React hook for action redux memoization.",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "esmodule": "dist/index.modern.js",
+  "umd:main": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "author": "Klyshnikov Roman <klyshnikov.roman@gmail.com>",
+  "license": "ISC",
+  "scripts": {
+    "build": "rimraf ./dist && microbundle",
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "eslint . --ext .js,.ts --fix",
+    "prettier": "prettier --write .",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "is-promise": "^4.0.0",
+    "lodash.get": "^4.4.2",
+    "lodash.isequal": "^4.5.0",
+    "lodash.set": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/lodash.get": "^4.4.7",
+    "@types/lodash.isequal": "^4.5.6",
+    "@types/lodash.set": "^4.3.7",
+    "@types/node": "^18.7.6",
+    "@typescript-eslint/eslint-plugin": "^5.33.1",
+    "@typescript-eslint/parser": "^5.33.1",
+    "eslint": "^8.22.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "microbundle": "^0.15.1",
+    "prettier": "^2.7.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.2",
+    "redux": "^4.2.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
+  },
+  "peerDependencies": {
+    "react": ">= 16.8",
+    "react-dom": ">= 16.8",
+    "react-redux": ">= 7.2.8",
+    "redux": ">= 4.1.2"
+  },
+  "keywords": [
+    "hook",
+    "hooks",
+    "redux-memo-action",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Romr1ch/use-memo-action.git"
+  },
+  "homepage": "https://github.com/Romr1ch/use-memo-action#readme",
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.md": "prettier --write"
+  }
+}
