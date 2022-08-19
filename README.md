@@ -5,16 +5,15 @@ React hook for action redux memoization.
 ## Установка
 
 ```
-// в npm
-npm i @romr1ch/use-memo-action redux-enchant-async-actions
-
-// в yarn
-yarn add @romr1ch/use-memo-action redux-enchant-async-actions
+npm i @romr1ch/use-memo-action
 ```
 
 ## Пример использования
 
 ### Подключение `middlewares` и `reducer`.
+
+> **Важно!** Мидлвара `throttleActionsMiddleware` работает вместе с `enchantAsyncActionsMiddleware`.
+> Установите `npm i redux-enchant-async-actions`, если это ещё не сделано.
 
 ```typescript jsx
 import { createStore, combineReducers, applyMiddleware } from 'redux'
