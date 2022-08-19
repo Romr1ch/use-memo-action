@@ -8,7 +8,7 @@ interface Throttles {
 const throttles: Throttles = {}
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export function throttleActionsMiddleware(delay = 60): Middleware<{}, AnyAction> {
+export function throttleActionsMiddleware(time = 60): Middleware<{}, AnyAction> {
   return () => (next) => (action) => {
     if (typeof action.payload === 'function') {
       const {
@@ -28,7 +28,7 @@ export function throttleActionsMiddleware(delay = 60): Middleware<{}, AnyAction>
 
       setTimeout(() => {
         delete throttles[type]
-      }, memoOptions?.ttl ?? delay)
+      }, memoOptions?.ttl ?? time)
 
       next(action)
     } else {
