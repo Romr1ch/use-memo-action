@@ -56,7 +56,7 @@ export function useMemoAction(
   const memoOptions: MemoOptions = { key, ttl, args, [MEMO]: true }
 
   const modifyAction = {
-    type: `${type}/${keyOption}`,
+    type: `@@memo/${type}/${keyOption}`,
     payload,
     meta: { ...meta, memoOptions },
   }
