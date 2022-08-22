@@ -4,13 +4,13 @@ export interface State {
   [key: string]: any
 }
 
-export interface MemoOption {
+export interface MemoOptions {
   key: string
   [MEMO]: boolean
 }
 
 export interface Meta {
-  memoOptions?: MemoOption
+  memoOptions?: MemoOptions
 }
 
 export interface ReducerAction {

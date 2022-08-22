@@ -1,4 +1,4 @@
-import { memoReducer, MemoOption } from '../src'
+import { memoReducer, MemoOptions } from '../src'
 import { MEMO } from '../src/utils'
 
 describe('reducer', () => {
@@ -38,7 +38,7 @@ describe('reducer', () => {
       meta: {
         memoOptions: {
           key: 'user',
-        } as MemoOption,
+        } as MemoOptions,
       },
     }
 
