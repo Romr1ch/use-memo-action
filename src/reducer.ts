@@ -6,7 +6,7 @@ interface State {
 
 interface MemoOption {
   key: string
-  [MEMO]: symbol
+  [MEMO]: boolean
 }
 
 interface Meta {

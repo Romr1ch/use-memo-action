@@ -23,7 +23,7 @@ export interface UseMemoActionArgs {
 
 export interface UseMemoActionReturn {
   data: any
-  error: string | false
+  error: string | boolean
   status: boolean
   meta: {
     storePath: string
