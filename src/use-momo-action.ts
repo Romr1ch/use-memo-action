@@ -32,7 +32,7 @@ export interface UseMemoActionReturn {
 
 type MemoOptions = {
   args: UseMemoActionArgs
-  [key: symbol]: true
+  [MEMO]: boolean
 } & Pick<UseMemoActionOptions, 'key' | 'ttl'>
 
 export function useMemoAction(
