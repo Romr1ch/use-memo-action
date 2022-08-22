@@ -1,5 +1,6 @@
 import { Middleware, AnyAction } from 'redux'
 import isEqual from 'lodash.isequal'
+import { MEMO } from './utils'
 
 interface Throttles {
   [key: string]: any
@@ -16,6 +17,10 @@ export function throttleActionsMiddleware(time = 60): Middleware<{}, AnyAction> 
         meta,
         meta: { memoOptions },
       } = action
+
+      if (!(memoOptions && memoOptions[MEMO])) {
+        return next(action)
+      }
 
       const cacheAction = { type, meta }
 

@@ -39,9 +39,18 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { createAction } from 'redux-actions'
 
-const getTodo = createAction('GET_TODO', () => {
-  return async () => {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/todos/1`)
+interface Data {
+  userId: number
+  id: number
+  title: string
+  completed: boolean
+}
+
+type GetTodoPayload = ({ id }: { id: number }) => Promise<Data>
+
+const getTodo = createAction<GetTodoPayload>('GET_TODO', () => {
+  return async ({ id = 1 }) => {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
 
     return await response.json()
   }
@@ -54,7 +63,7 @@ export function ComponentA() {
 }
 
 export function ComponentB() {
-  useMemoAction(getTodo, { key: 'todo' })
+  useMemoAction(getTodo, { key: 'todo' }, { id: 1 })
 
   return <h1>ComponentB</h1>
 }
@@ -92,6 +101,7 @@ function App() {
 | --------- | --------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | action\*  | UseMemoActionAction                           | -            | Может передаваться либо функцией, либо объектом, у которого `payload` должен возвращать функцию, которая ничего не принимает и возвращает `Promise`. Здесь можно делать запросы к серверу. |
 | options\* | [UseMemoActionOptions](#UseMemoActionOptions) | -            | Второй аргумент принимает объект, в котором необходимо передать ключ с уникальным значением (`{ key: 'unic-value' }`).                                                                     |
+| args      | { [key: string]: any }                        | {}           | Аргументы, которые хук передаст в возвращаемую функцию в экшене.                                                                                                                           |
 
 ### Возвращает
 
