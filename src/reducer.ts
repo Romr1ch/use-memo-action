@@ -1,19 +1,19 @@
 import { MEMO } from './utils'
 
-interface State {
+export interface State {
   [key: string]: any
 }
 
-interface MemoOption {
+export interface MemoOption {
   key: string
   [MEMO]: boolean
 }
 
-interface Meta {
+export interface Meta {
   memoOptions?: MemoOption
 }
 
-interface ReducerAction {
+export interface ReducerAction {
   type: string
   payload: any
   meta?: Meta
