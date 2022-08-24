@@ -3,18 +3,16 @@ import { Action, throttleActionsMiddleware } from '../src'
 import { MEMO } from '../src/utils'
 
 describe('middleware', () => {
-  const create = () => {
-    const next = jest.fn()
+  const next = jest.fn()
 
-    const middleware = (action: Action, time?: number) =>
-      throttleActionsMiddleware(time)({} as Store)(next)(action)
+  const middleware = (action: Action, time?: number) =>
+    throttleActionsMiddleware(time)({} as Store)(next)(action)
 
-    return { middleware, next }
-  }
+  afterEach(() => {
+    next.mockReset()
+  })
 
   test('call common action', () => {
-    const { middleware, next } = create()
-
     const action = { type: 'TEST' }
 
     middleware(action)
@@ -23,8 +21,6 @@ describe('middleware', () => {
   })
 
   test('call an action belonging to the hook', () => {
-    const { middleware, next } = create()
-
     const payload = jest.fn(() => new Promise<string>((r) => r('ok')))
 
     const action = {
@@ -45,8 +41,6 @@ describe('middleware', () => {
   })
 
   test('call payload function with parameter passing', () => {
-    const { middleware, next } = create()
-
     const payload = jest.fn<Promise<string>, { id: number }[]>(
       ({ id = 1 }) => new Promise<string>((res) => res(`/api/users/${id}`))
     )
@@ -74,16 +68,14 @@ describe('middleware', () => {
   })
 
   test('one call many identical actions in N time', () => {
-    const { middleware, next } = create()
-
     const payload = jest.fn(() => new Promise<string>((res) => res('ok')))
 
     const action = {
-      type: '@@memo/USER/user',
+      type: '@@memo/TODOS/todos',
       payload,
       meta: {
         memoOptions: {
-          key: 'user',
+          key: 'todo',
           [MEMO]: true,
         },
       },
@@ -98,16 +90,14 @@ describe('middleware', () => {
   })
 
   test('call is equal to called identical action after N time', () => {
-    const { middleware, next } = create()
-
     const payload = jest.fn(() => new Promise<string>((res) => res('ok')))
 
     const action = {
-      type: '@@memo/USER/user',
+      type: '@@memo/POSTS/posts',
       payload,
       meta: {
         memoOptions: {
-          key: 'user',
+          key: 'posts',
           [MEMO]: true,
         },
       },
