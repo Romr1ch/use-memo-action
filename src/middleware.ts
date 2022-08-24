@@ -23,20 +23,24 @@ export function throttleActionsMiddleware(time = 60): Middleware<{}, AnyAction> 
       }
 
       const cacheAction = { type, meta }
+      const { key } = memoOptions
 
-      if (throttles[type] && isEqual(throttles[type], cacheAction)) {
+      if (throttles[key] && isEqual(throttles[key], cacheAction)) {
         return
       }
 
-      throttles[type] = cacheAction
+      throttles[key] = cacheAction
 
-      action.payload = action.payload(memoOptions?.args)
+      const newAction = {
+        ...action,
+        payload: action.payload(memoOptions?.args || {}),
+      }
 
       setTimeout(() => {
-        delete throttles[type]
+        delete throttles[key]
       }, memoOptions?.ttl ?? time)
 
-      next(action)
+      next(newAction)
     } else {
       next(action)
     }
