@@ -6,11 +6,11 @@ import { MEMO, objectToString } from './utils'
 
 export interface Action<T = unknown> {
   type: string
-  payload: unknown | (() => T | Promise<T>)
+  payload?: unknown | ((args: object) => T | Promise<T>)
   meta?: object
 }
 
-export type UseMemoActionAction<T = unknown> = ((...args: unknown[]) => Action<T>) | Action<T>
+export type UseMemoActionAction<T = unknown> = (() => Action<T>) | Action<T>
 
 export interface UseMemoActionOptions {
   key: string
@@ -21,8 +21,8 @@ export interface UseMemoActionArgs {
   [key: string]: any
 }
 
-export interface UseMemoActionReturn {
-  data: any
+export interface UseMemoActionReturn<T = any> {
+  data: T
   error: string | boolean
   status: boolean
   meta: {
@@ -35,11 +35,11 @@ type MemoOptions = {
   [MEMO]: boolean
 } & Pick<UseMemoActionOptions, 'key' | 'ttl'>
 
-export function useMemoAction(
+export function useMemoAction<T>(
   action: UseMemoActionAction,
   options: UseMemoActionOptions,
   args: UseMemoActionArgs = {}
-): UseMemoActionReturn {
+): UseMemoActionReturn<T> {
   const dispatch = useDispatch()
   const { key: keyOption, ttl } = options
   const { type, payload, meta } = typeof action === 'function' ? action() : action
