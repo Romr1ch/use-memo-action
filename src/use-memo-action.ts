@@ -8,20 +8,16 @@ interface ActionMeta {
   [key: string]: unknown
 }
 
-interface PayloadArgs {
-  [key: string]: unknown
-}
-
 export interface ActionBase {
   type: string
 }
 
-interface ActionObject<T = unknown, A extends PayloadArgs = PayloadArgs> extends ActionBase {
+interface ActionObject<T = unknown, A extends object = object> extends ActionBase {
   payload: ((args: A) => T | Promise<T>) | unknown
   meta?: ActionMeta
 }
 
-type Action<T, A extends PayloadArgs> = (() => ActionObject<T, A>) | ActionObject<T, A>
+type Action<T, A extends object> = (() => ActionObject<T, A>) | ActionObject<T, A>
 
 interface MetaReturn {
   storePath: string
@@ -34,30 +30,29 @@ interface Return<T = unknown> {
   meta: MetaReturn
 }
 
-interface Options {
-  key: string
+interface Options<A> {
+  args?: A
   ttl?: number
 }
 
 interface MemoOptions {
   key: string
   ttl?: number
-  args: PayloadArgs
+  args: object
   [MEMO]: boolean
 }
 
-export function useMemoAction<T, A extends PayloadArgs = PayloadArgs>(
+export function useMemoAction<T, A extends object = object>(
   action: Action<T, A>,
-  options: Options,
-  args: A = {} as A
+  options: Options<A> = {}
 ): Return<T> {
   const dispatch = useDispatch()
-  const { key: keyOption, ttl } = options
+  const { args = {}, ttl } = options
   const { type, payload, meta } = typeof action === 'function' ? action() : action
 
-  let key = keyOption
+  let key = type
 
-  if (Object.keys(args).length !== 0) {
+  if (Object.keys(args).length) {
     key = `${key}:${objectToString(args)}`
   }
 
@@ -67,7 +62,7 @@ export function useMemoAction<T, A extends PayloadArgs = PayloadArgs>(
   const memoOptions: MemoOptions = { key, ttl, args, [MEMO]: true }
 
   const modifyAction: ActionObject = {
-    type: `@@memo/${type}/${keyOption}`,
+    type: `@@memo/${type}`,
     payload,
     meta: { ...meta, memoOptions },
   }
