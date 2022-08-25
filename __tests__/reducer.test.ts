@@ -1,4 +1,4 @@
-import { memoReducer, MemoOptions } from '../src'
+import { memoReducer, MemoOptions } from '../src/reducer'
 import { MEMO } from '../src/utils'
 
 describe('reducer', () => {

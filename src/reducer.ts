@@ -1,7 +1,7 @@
 import { MEMO } from './utils'
 
-export interface State {
-  [key: string]: any
+interface State {
+  [key: string]: unknown
 }
 
 export interface MemoOptions {
@@ -9,13 +9,13 @@ export interface MemoOptions {
   [MEMO]: boolean
 }
 
-export interface Meta {
+interface Meta {
   memoOptions?: MemoOptions
 }
 
-export interface ReducerAction {
+interface ReducerAction {
   type: string
-  payload: any
+  payload: unknown
   meta?: Meta
 }
 

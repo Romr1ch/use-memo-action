@@ -4,42 +4,53 @@ import isPromise from 'is-promise'
 import get from 'lodash.get'
 import { MEMO, objectToString } from './utils'
 
-export interface Action<T = unknown> {
-  type: string
-  payload?: unknown | ((args: object) => T | Promise<T>)
-  meta?: object
+interface ActionMeta {
+  [key: string]: unknown
 }
 
-export type UseMemoActionAction<T = unknown> = (() => Action<T>) | Action<T>
+interface PayloadArgs {
+  [key: string]: unknown
+}
 
-export interface UseMemoActionOptions {
+export interface ActionBase {
+  type: string
+}
+
+interface ActionObject<T = unknown, A extends PayloadArgs = PayloadArgs> extends ActionBase {
+  payload: ((args: A) => T | Promise<T>) | unknown
+  meta?: ActionMeta
+}
+
+type Action<T, A extends PayloadArgs> = (() => ActionObject<T, A>) | ActionObject<T, A>
+
+interface MetaReturn {
+  storePath: string
+}
+
+interface Return<T = unknown> {
+  data: T
+  error: string | boolean
+  status: boolean
+  meta: MetaReturn
+}
+
+interface Options {
   key: string
   ttl?: number
 }
 
-export interface UseMemoActionArgs {
-  [key: string]: any
-}
-
-export interface UseMemoActionReturn<T = any> {
-  data: T
-  error: string | boolean
-  status: boolean
-  meta: {
-    storePath: string
-  }
-}
-
-type MemoOptions = {
-  args: UseMemoActionArgs
+interface MemoOptions {
+  key: string
+  ttl?: number
+  args: PayloadArgs
   [MEMO]: boolean
-} & Pick<UseMemoActionOptions, 'key' | 'ttl'>
+}
 
-export function useMemoAction<T>(
-  action: UseMemoActionAction,
-  options: UseMemoActionOptions,
-  args: UseMemoActionArgs = {}
-): UseMemoActionReturn<T> {
+export function useMemoAction<T, A extends PayloadArgs = PayloadArgs>(
+  action: Action<T, A>,
+  options: Options,
+  args: A = {} as A
+): Return<T> {
   const dispatch = useDispatch()
   const { key: keyOption, ttl } = options
   const { type, payload, meta } = typeof action === 'function' ? action() : action
@@ -47,7 +58,7 @@ export function useMemoAction<T>(
   let key = keyOption
 
   if (Object.keys(args).length !== 0) {
-    key += `:${objectToString(args)}`
+    key = `${key}:${objectToString(args)}`
   }
 
   const path = `memo.${key}`
@@ -55,7 +66,7 @@ export function useMemoAction<T>(
 
   const memoOptions: MemoOptions = { key, ttl, args, [MEMO]: true }
 
-  const modifyAction = {
+  const modifyAction: ActionObject = {
     type: `@@memo/${type}/${keyOption}`,
     payload,
     meta: { ...meta, memoOptions },

@@ -1,15 +1,14 @@
-import { Middleware, AnyAction } from 'redux'
+import { Middleware } from 'redux'
 import isEqual from 'lodash.isequal'
 import { MEMO } from './utils'
 
 interface Throttles {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 const throttles: Throttles = {}
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function throttleActionsMiddleware(time = 60): Middleware<{}, AnyAction> {
+export function throttleActionsMiddleware(time = 60): Middleware {
   return () => (next) => (action) => {
     if (typeof action.payload === 'function') {
       const {

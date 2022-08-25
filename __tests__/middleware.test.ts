@@ -1,11 +1,12 @@
 import { Store } from 'redux'
-import { Action, throttleActionsMiddleware } from '../src'
+import { throttleActionsMiddleware } from '../src'
+import { ActionBase } from '../src/use-memo-action'
 import { MEMO } from '../src/utils'
 
 describe('middleware', () => {
   const next = jest.fn()
 
-  const middleware = (action: Action, time?: number) =>
+  const middleware = (action: ActionBase, time?: number) =>
     throttleActionsMiddleware(time)({} as Store)(next)(action)
 
   afterEach(() => {
