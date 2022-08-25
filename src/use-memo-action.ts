@@ -12,25 +12,25 @@ export interface ActionBase {
   type: string
 }
 
-interface ActionObject<T = unknown, A extends object = object> extends ActionBase {
+export interface ActionObject<T = unknown, A extends object = object> extends ActionBase {
   payload: ((args: A) => T | Promise<T>) | unknown
   meta?: ActionMeta
 }
 
-type Action<T, A extends object> = (() => ActionObject<T, A>) | ActionObject<T, A>
+export type Action<T, A extends object> = (() => ActionObject<T, A>) | ActionObject<T, A>
 
 interface MetaReturn {
   storePath: string
 }
 
-interface Return<T = unknown> {
+export interface Return<T = unknown> {
   data: T
   error: string | boolean
   status: boolean
   meta: MetaReturn
 }
 
-interface Options<A> {
+export interface Options<A extends object = object> {
   args?: A
   ttl?: number
 }

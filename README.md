@@ -38,6 +38,7 @@ const store = createStore(
 import React from 'react'
 import { Provider } from 'react-redux'
 import { createAction } from 'redux-actions'
+import { Payload } from '@romr1ch/use-memo-action'
 
 interface Data {
   userId: number
@@ -46,9 +47,11 @@ interface Data {
   completed: boolean
 }
 
-type GetTodoPayload = ({ id }: { id: number }) => Promise<Data>
+interface Args {
+  id: number
+}
 
-const getTodo = createAction<GetTodoPayload>('GET_TODO', () => {
+const getTodo = createAction<Payload<Promise<Data>, Args>>('GET_TODO', () => {
   return async ({ id = 1 }) => {
     const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
 
@@ -57,19 +60,19 @@ const getTodo = createAction<GetTodoPayload>('GET_TODO', () => {
 })
 
 export function ComponentA() {
-  const { data, error, status, meta } = useMemoAction(getTodo, { key: 'todo' })
+  const { data, error, status, meta } = useMemoAction<Data>(getTodo)
 
   return <h1>ComponentA</h1>
 }
 
 export function ComponentB() {
-  useMemoAction(getTodo, { key: 'todo' }, { id: 1 })
+  useMemoAction<Data>(getTodo)
 
   return <h1>ComponentB</h1>
 }
 
 export function ComponentC() {
-  useMemoAction(getTodo, { key: 'todo' })
+  useMemoAction<Data, Args>(getTodo, { args: { id: 5 } })
 
   return <h1>ComponentC</h1>
 }
@@ -97,24 +100,23 @@ function App() {
 
 ### Опции
 
-| Аргумент  | Тип                                           | По умолчанию | Описание                                                                                                                                                                                   |
-| --------- | --------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| action\*  | UseMemoActionAction                           | -            | Может передаваться либо функцией, либо объектом, у которого `payload` должен возвращать функцию, которая ничего не принимает и возвращает `Promise`. Здесь можно делать запросы к серверу. |
-| options\* | [UseMemoActionOptions](#UseMemoActionOptions) | -            | Второй аргумент принимает объект, в котором необходимо передать ключ с уникальным значением (`{ key: 'unic-value' }`).                                                                     |
-| args      | { [key: string]: any }                        | {}           | Аргументы, которые хук передаст в возвращаемую функцию в экшене.                                                                                                                           |
+| Аргумент | Тип                 | По умолчанию | Описание                                                                                                                                                                                   |
+| -------- | ------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --- |
+| action\* | Action              | -            | Может передаваться либо функцией, либо объектом, у которого `payload` должен возвращать функцию, которая ничего не принимает и возвращает `Promise`. Здесь можно делать запросы к серверу. |
+| options  | [Options](#Options) | -            | Необязательный объект настроек.                                                                                                                                                            |     |
 
 ### Возвращает
 
 | Аргумент | Тип                   | По умолчанию | Описание                                                                   |
 | -------- | --------------------- | ------------ | -------------------------------------------------------------------------- |
 | data     | any                   | undefined    | Результат экшена, если будет установлена ошибка, то `undefined`.           |
-| error    | string или false      | false        | Текст ошибки или `false`, если её нет.                                     |
+| error    | string или boolean    | false        | Текст ошибки или `false`, если её нет.                                     |
 | status   | boolean               | -            | Зависит от `error`.                                                        |
 | meta     | { storePath: string } | -            | Единственным свойством является `storePath` — путь для данных к хранилищу. |
 
-## UseMemoActionOptions
+## Options
 
 | Свойство | Тип    | По умолчанию | Описание                                                                                                                                                      |
 | -------- | ------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| key\*    | string | -            | Уникальное значение, под котором будут храниться данные в хранилище.                                                                                          |
+| args     | object | -            | Аргументы, которые будут переданы payload функции при вызове в хуке.                                                                                          |
 | ttl      | number | 60           | Устанавливает время, нахождении в кэше для конкретного экшена. Значение можно установить [глобально](#throttleActionsMiddleware) для всех хуков в приложении. |

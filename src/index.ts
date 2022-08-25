@@ -1,4 +1,4 @@
-export { useMemoAction } from './use-memo-action'
+export { useMemoAction, Action, ActionObject, ActionBase, Return, Options } from './use-memo-action'
 export { throttleActionsMiddleware } from './middleware'
 export { memoReducer } from './reducer'
 
