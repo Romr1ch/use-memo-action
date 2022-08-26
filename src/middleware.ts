@@ -32,7 +32,7 @@ export function throttleActionsMiddleware(time = 60): Middleware {
 
       const newAction = {
         ...action,
-        payload: action.payload(memoOptions?.args || {}),
+        payload: action.payload(),
       }
 
       setTimeout(() => {

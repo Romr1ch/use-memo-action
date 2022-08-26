@@ -51,8 +51,8 @@ interface Args {
   id: number
 }
 
-const getTodo = createAction<Payload<Promise<Data>, Args>>('GET_TODO', () => {
-  return async ({ id = 1 }) => {
+const getTodo = createAction<Payload<Promise<Data>>, Args>('GET_TODO', ({ id = 1 }) => {
+  return async () => {
     const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
 
     return await response.json()

@@ -4,33 +4,22 @@ import isPromise from 'is-promise'
 import get from 'lodash.get'
 import { MEMO, objectToString } from './utils'
 
-interface ActionMeta {
-  [key: string]: unknown
-}
-
 export interface ActionBase {
   type: string
 }
-
-export interface ActionObject<T = unknown, A extends object = object> extends ActionBase {
-  payload: ((args: A) => T | Promise<T>) | unknown
-  meta?: ActionMeta
-}
-
-export type Action<T, A extends object> = (() => ActionObject<T, A>) | ActionObject<T, A>
 
 interface MetaReturn {
   storePath: string
 }
 
-export interface Return<T = unknown> {
+export interface Return<T> {
   data: T
   error: string | boolean
   status: boolean
   meta: MetaReturn
 }
 
-export interface Options<A extends object = object> {
+export interface Options<A> {
   args?: A
   ttl?: number
 }
@@ -42,13 +31,16 @@ interface MemoOptions {
   [MEMO]: boolean
 }
 
+export type Payload<T> = () => T
+
 export function useMemoAction<T, A extends object = object>(
-  action: Action<T, A>,
+  // TODO: Написать тип
+  action: any,
   options: Options<A> = {}
 ): Return<T> {
   const dispatch = useDispatch()
   const { args = {}, ttl } = options
-  const { type, payload, meta } = typeof action === 'function' ? action() : action
+  const { type, payload, meta } = action(args)
 
   let key = type
 
@@ -61,7 +53,7 @@ export function useMemoAction<T, A extends object = object>(
 
   const memoOptions: MemoOptions = { key, ttl, args, [MEMO]: true }
 
-  const modifyAction: ActionObject = {
+  const modifyAction = {
     type: `@@memo/${type}`,
     payload,
     meta: { ...meta, memoOptions },
