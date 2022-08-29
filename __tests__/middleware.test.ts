@@ -1,6 +1,6 @@
 import { Store } from 'redux'
 import { throttleActionsMiddleware } from '../src'
-import { ActionBase } from '../src/use-memo-action'
+import { ActionBase } from '../src'
 import { MEMO } from '../src/utils'
 
 describe('middleware', () => {
@@ -39,33 +39,6 @@ describe('middleware', () => {
 
     expect(next).toHaveBeenCalledTimes(1)
     expect(payload).toHaveBeenCalledTimes(1)
-  })
-
-  test('call payload function with parameter passing', () => {
-    const payload = jest.fn<Promise<string>, { id: number }[]>(
-      ({ id = 1 }) => new Promise<string>((res) => res(`/api/users/${id}`))
-    )
-
-    const action = {
-      type: '@@memo/USER/user',
-      payload,
-      meta: {
-        memoOptions: {
-          key: 'user:{id:1}',
-          args: { id: 1 },
-          [MEMO]: true,
-        },
-      },
-    }
-
-    middleware(action)
-
-    expect(next).toHaveBeenCalledTimes(1)
-    expect(payload).toHaveBeenCalledTimes(1)
-
-    const [[args]] = payload.mock.calls
-
-    expect(action.meta.memoOptions.args).toEqual(args)
   })
 
   test('one call many identical actions in N time', () => {
